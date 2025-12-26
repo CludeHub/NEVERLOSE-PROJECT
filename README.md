@@ -4,7 +4,7 @@
 
 # USAGE
 ```lua
-local NEVERLOSE = loadstring(game:HttpGet("https://raw.githubusercontent.com/CludeHub/SourceCludeLib/refs/heads/main/NerverLoseLibEdited.lua"))()
+local NEVERLOSE = loadstring(game:HttpGet("https://raw.githubusercontent.com/CludeHub/NEVERLOSE-PROJECT/refs/heads/main/NerverLoseLibEdited.lua"))()
 local LOADER = loadstring(game:HttpGet("https://raw.githubusercontent.com/CludeHub/SourceCludeLib/refs/heads/main/loader.Function.lua"))()
 
 LOADER:Add(function()
