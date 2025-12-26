@@ -8,6 +8,7 @@ style.ZIndex = 50
 
 local textLabel = Instance.new("TextLabel", style)
 textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.Position = UDim2.new(0, 0, 0, 0)
 textLabel.BackgroundTransparency = 1
 textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 textLabel.Font = Enum.Font.Gotham
@@ -25,6 +26,7 @@ color.BackgroundTransparency = 1
 color.Parent = style
 color.ZIndex = 50
 
+-- Dark Theme button
 local darkButton = Instance.new("TextButton")
 darkButton.Name = "Dark"
 darkButton.Position = UDim2.new(0.7, 0, 0, 0)
@@ -36,6 +38,7 @@ darkButton.Parent = color
 Instance.new("UICorner", darkButton).CornerRadius = UDim.new(1, 0)
 darkButton.ZIndex = 50
 
+-- Original Theme button
 local originalButton = Instance.new("TextButton")
 originalButton.Name = "Original"
 originalButton.Position = UDim2.new(0.4, 0, 0, 0)
@@ -47,6 +50,7 @@ originalButton.Parent = color
 Instance.new("UICorner", originalButton).CornerRadius = UDim.new(1, 0)
 originalButton.ZIndex = 50
 
+-- New Orange Theme button
 local orangeButton = Instance.new("TextButton")
 orangeButton.Name = "Orange"
 orangeButton.Position = UDim2.new(0.1, 0, 0, 0)
@@ -55,10 +59,11 @@ orangeButton.AutoButtonColor = false
 orangeButton.Text = ""
 orangeButton.BackgroundColor3 = Color3.fromRGB(255, 128, 0)
 orangeButton.Parent = color
-Instance.new("UICorner", orangeButton).CornerRadius = UDim.new(1, 0)
 orangeButton.ZIndex = 50
 
--- THEME APPLY FUNCTION
+Instance.new("UICorner", orangeButton).CornerRadius = UDim.new(1, 0)
+
+-- Apply Theme Function
 local function applyTheme(theme)
     local core = game.CoreGui:FindFirstChild("NEVERLOSE")
     if not core then return end
@@ -75,10 +80,14 @@ local function applyTheme(theme)
             if obj:IsA("Frame") then
                 local name = obj.Name
                 if name == "Line" then
-                    obj.BackgroundColor3 = theme.MainColor
+                    obj.BackgroundColor3 = theme.MainColor -- LINE fix
+                elseif name:find("Line") then
+                    obj.BackgroundColor3 = theme.TraceColor
                 elseif name:find("Section") then
                     obj.BackgroundColor3 = theme.SectionColor
-                elseif name:find("outlo") or name:find("outlo_2") or name:find("outlo_3") then
+                elseif name:find("outlo") then
+                    obj.BackgroundColor3 = theme.TraceColor
+                elseif name:find("outlo_2") or name:find("outlo_3") then
                     obj.BackgroundColor3 = theme.TraceColor
                 elseif name:find("lay") then
                     obj.BackgroundColor3 = theme.StrokeColor
@@ -108,7 +117,7 @@ local function applyTheme(theme)
     end
 end
 
--- THEME BUTTONS
+-- Button connections
 darkButton.MouseButton1Click:Connect(function()
     applyTheme({
         BlackgroundColor = Color3.fromRGB(22, 22, 22),
@@ -134,7 +143,7 @@ originalButton.MouseButton1Click:Connect(function()
         TraceColor = Color3.fromRGB(0, 76, 99),
         MainColor = Color3.fromRGB(19, 176, 243),
         MainColorDrop = Color3.fromRGB(3, 6, 25),
-        SectionColor = Color3.fromRGB(0, 17, 36),
+        SectionColor = Color3.fromRGB(0, 17, 33),
         StrokeColor = Color3.fromRGB(3, 35, 50),
         ButtonBlackgroundColor = Color3.fromRGB(2, 5, 22),
         Button = Color3.fromRGB(0, 172, 247),
@@ -160,45 +169,36 @@ orangeButton.MouseButton1Click:Connect(function()
     })
 end)
 
--- AUTO LOAD ORIGINAL THEME
+-- ⚡ AUTO LOAD ORIGINAL THEME
 task.wait(0.5)
-applyTheme({
-    BlackgroundColor = Color3.fromRGB(1, 17, 33),
-    BlackColor = Color3.fromRGB(9, 9, 19),
-    HeaderColor = Color3.fromRGB(7, 7, 17),
-    TraceColor = Color3.fromRGB(0, 76, 99),
-    MainColor = Color3.fromRGB(19, 176, 243),
-    MainColorDrop = Color3.fromRGB(3, 6, 25),
-    SectionColor = Color3.fromRGB(0, 17, 33),
-    StrokeColor = Color3.fromRGB(3, 35, 50),
-    ButtonBlackgroundColor = Color3.fromRGB(2, 5, 22),
-    Button = Color3.fromRGB(0, 172, 247),
-    SearchColor = Color3.fromRGB(0, 17, 35),
-    Save = Color3.fromRGB(0, 76, 99)
-})
+originalButton:Click() -- triggers your exact existing logic
 
--- EXTRA COLOR DYNAMICS (DownBar + TabButton + Icons)
+-- Keep your downbar/tab/icon logic completely untouched
 local NEVERLOSE = game.CoreGui:FindFirstChild("NEVERLOSE")
 if not NEVERLOSE then return end
 local Frame = NEVERLOSE:FindFirstChild("Frame")
 if not Frame then return end
-
 local RunService = game:GetService("RunService")
-local lastDownBarColor, lastIconColor, lastTabColor = nil, nil, nil
+
+local lastDownBarColor = nil
+local lastIconColor = nil
+local lastTabColor = nil
 
 RunService.RenderStepped:Connect(function()
     local bgColor = Frame.BackgroundColor3
-    local newDownBarColor, newIconColor, newTabColor = nil, nil, nil
+    local newDownBarColor = nil
+    local newIconColor = nil
+    local newTabColor = nil
 
-    if bgColor == Color3.fromRGB(1, 17, 36) then  
-        newDownBarColor = Color3.fromRGB(1, 30, 59)
+    if bgColor == Color3.fromRGB(1, 17, 33) then  
+        newDownBarColor = Color3.fromRGB(1, 30, 59)  
         newTabColor = Color3.fromRGB(19, 176, 243)
     elseif bgColor == Color3.fromRGB(22, 22, 22) then  
-        newDownBarColor = Color3.fromRGB(25, 25, 25)
+        newDownBarColor = Color3.fromRGB(25, 25, 25)  
         newTabColor = Color3.fromRGB(255, 255, 255)
     elseif bgColor == Color3.fromRGB(43, 43, 43) then
         newDownBarColor = Color3.fromRGB(43, 43, 43)
-        newIconColor = Color3.fromRGB(255, 170, 0)
+        newIconColor = Color3.fromRGB(255, 170, 0) 
         newTabColor = Color3.fromRGB(22, 22, 22)
     else
         return
