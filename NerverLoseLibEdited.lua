@@ -291,7 +291,7 @@ function NEVERLOSE:AddWindow(NameScriptHub,Text,name,UICustomSize)
 	
 	local WindowFunctinos={}
 	local ToggleUI=false
-	local ooldsize=UICustomSize or UDim2.new(0.5530999988, 30, 0.980999971, 0)
+	local ooldsize=UICustomSize or UDim2.new(0.5530999988, 30, 0.980999971, 30)
 	local Tabs={}
 
 	local ScreenGui = Instance.new("ScreenGui")
@@ -1925,7 +1925,7 @@ Line.Parent = Toggle
 						TweenService:Create(LabelText,TweenInfo.new(timea),{TextTransparency=0.3}):Play()
 						TweenService:Create(Icon,TweenInfo.new(timea),{Position=UDim2.new(0.25,0,0.5,0),BackgroundColor3=Color3.fromRGB(223, 251, 255)}):Play();
 						Effect.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-						Icon.BackgroundTransparency = 0.56
+						Icon.BackgroundTransparency = 0.3
 					end
 				end
 
