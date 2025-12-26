@@ -452,7 +452,7 @@ print(Text .. " is Running")
 	Frame.Parent = ScreenGui
 	Frame.Active = true
 	Frame.BackgroundColor3 = NEVERLOSE.Themes.BlackgroundColor
-	Frame.BackgroundTransparency = 0.4
+	Frame.BackgroundTransparency = 0.05
 	Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Frame.BorderSizePixel = 0
 	Frame.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -464,7 +464,7 @@ print(Text .. " is Running")
 	TweenService:Create(Frame,TweenInfo.new(1,Enum.EasingStyle.Quint),{Size=ooldsize}):Play()
 
 	UICorner.Parent = Frame
-	UICorner.CornerRadius = UDim.new(0, 12)
+	UICorner.CornerRadius = UDim.new(0, 5)
 
 
 	local CoreGui = game:GetService("CoreGui")
@@ -908,7 +908,7 @@ Sound2.Ended:Connect(function()
 	Frame_2.Size = UDim2.new(0.774634778, 0, 0.91, 0)
 	Frame_2.ZIndex = 2
 	
-	UICorner_2.CornerRadius = UDim.new(0, 12)
+	UICorner_2.CornerRadius = UDim.new(0, 5)
 	UICorner_2.Parent = Frame_2
 
 	Frame_3.Parent = Frame
@@ -921,7 +921,7 @@ Sound2.Ended:Connect(function()
 	Frame_3.Size = UDim2.new(0.774999976, 0, 0.140000001, 0)
 	Frame_3.ZIndex = 4
 
-	UICorner_3.CornerRadius = UDim.new(0, 12)
+	UICorner_3.CornerRadius = UDim.new(0, 5)
 	UICorner_3.Parent = Frame_3
 
 	DropShadow.Name = "DropShadow"
@@ -937,21 +937,6 @@ Sound2.Ended:Connect(function()
 	DropShadow.ImageTransparency = 0.860
 	DropShadow.ScaleType = Enum.ScaleType.Slice
 	DropShadow.SliceCenter = Rect.new(49, 49, 450, 450)
-
-	local DropShadow2 = Instance.new('ImageLabel')
-DropShadow2.Position = UDim2.new(0.5, 0, 0.5, 0)
-DropShadow2.Size = UDim2.new(1, 47, 1, 47)
-DropShadow2.AnchorPoint = Vector2.new(0.5, 0.5)
-DropShadow2.BackgroundColor3 = Color3.fromRGB(163, 162, 165)
-DropShadow2.BackgroundTransparency = 1
-DropShadow2.BorderSizePixel = 0
-DropShadow2.Image = "rbxassetid://6014261993"
-DropShadow2.ImageColor3 = Color3.fromRGB(0, 0, 0)
-DropShadow2.ZIndex = 0
-DropShadow2.Parent = game.CoreGui.NEVERLOSE.Frame
-DropShadow2.Rotation = 0.0001
-DropShadow2.ScaleType = Enum.ScaleType.Slice
-DropShadow2.SliceCenter = Rect.new(49, 49, 450, 450)
 	
 	HeadName.Name = "HeadName"
 	HeadName.Parent = Frame
