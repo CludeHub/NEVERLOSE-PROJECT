@@ -5,257 +5,310 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-function NEVERLOSE.new(HubText, HubImage, GameName, WindowSize)
-	local self = setmetatable({}, NEVERLOSE)
+function NEVERLOSE:CreateWindow(HubText, HubImage, GameName, WindowSize)
+    local self = setmetatable({}, NEVERLOSE)
+    
+    -- Properties
+    self.WindowSize = WindowSize or UDim2.new(0, 630, 0, 450)
+    self.Tabs = {}
+    self.CurrentTab = nil
 
-	-- Main Gui Setup
-	local ScreenGui = Instance.new('ScreenGui')
-	ScreenGui.Name = "NEVERLOSE_UI"
-	ScreenGui.Parent = game:GetService("CoreGui")
-	self.Gui = ScreenGui
+    -- Main ScreenGui
+    local ScreenGui = Instance.new('ScreenGui')
+    ScreenGui.Name = "NEVERLOSE"
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ScreenGui.Parent = game:GetService("CoreGui")
+    self.ScreenGui = ScreenGui
 
-	-- Main Window
-	local Window = Instance.new('Frame')
-	Window.Name = "Window"
-	Window.Position = UDim2.new(0.5, -315, 0.5, -225)
-	Window.Active = true
-	Window.Draggable = true
-	Window.Size = WindowSize or UDim2.new(0, 630, 0, 450)
-	Window.BackgroundColor3 = Color3.fromRGB(11, 13, 27)
-	Window.BackgroundTransparency = 0.02
-	Window.BorderSizePixel = 0
-	Window.Parent = ScreenGui
-	self.Main = Window
+    -- Main Window
+    local Window = Instance.new('Frame')
+    Window.Name = "Window"
+    Window.Position = UDim2.new(0.5, -self.WindowSize.X.Offset/2, 0.5, -self.WindowSize.Y.Offset/2)
+    Window.Size = self.WindowSize
+    Window.BackgroundColor3 = Color3.fromRGB(11, 13, 27)
+    Window.BackgroundTransparency = 0.02
+    Window.BorderSizePixel = 1
+    Window.Active = true
+    Window.Draggable = true
+    Window.Parent = ScreenGui
+    self.Window = Window
 
-	local UICorner_2 = Instance.new('UICorner', Window)
-	UICorner_2.CornerRadius = UDim.new(0, 8)
+    local UICorner_2 = Instance.new('UICorner')
+    UICorner_2.CornerRadius = UDim.new(0, 8)
+    UICorner_2.Parent = Window
 
-	-- Elements from your original script
-	local GameTitle = Instance.new('TextLabel', Window)
-	GameTitle.Name = "GameTitle"
-	GameTitle.Position = UDim2.new(0.074, 0, 0.05, 0)
-	GameTitle.Size = UDim2.new(0.2, 0, 0.022, 0)
-	GameTitle.BackgroundTransparency = 1
-	GameTitle.Text = GameName or "Counter Strike 2"
-	GameTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-	GameTitle.TextScaled = true
-	GameTitle.Font = Enum.Font.SourceSansBold
-	GameTitle.TextTransparency = 0.5
-	GameTitle.TextXAlignment = Enum.TextXAlignment.Left
+    -- Header Labels
+    local GameTitle = Instance.new('TextLabel')
+    GameTitle.Name = "GameTitle"
+    GameTitle.Position = UDim2.new(0.074, 0, 0.05, 0)
+    GameTitle.Size = UDim2.new(0.2, 0, 0.0218, 0)
+    GameTitle.BackgroundTransparency = 1
+    GameTitle.Text = GameName or "Counter Strike 2"
+    GameTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    GameTitle.TextScaled = true
+    GameTitle.Font = Enum.Font.SourceSansBold
+    GameTitle.TextTransparency = 0.5
+    GameTitle.TextXAlignment = Enum.TextXAlignment.Left
+    GameTitle.Parent = Window
 
-	local Line1 = Instance.new('Frame', Window)
-	Line1.Name = "Line1"
-	Line1.Position = UDim2.new(0.015, 0, 0.09, 0)
-	Line1.Size = UDim2.new(0.18, 0, 0, 1)
-	Line1.BackgroundColor3 = Color3.fromRGB(73, 73, 73)
-	Line1.BackgroundTransparency = 0.4
+    local Title = Instance.new('TextLabel')
+    Title.Name = "Title"
+    Title.Position = UDim2.new(0.074, 0, 0.01, 0)
+    Title.Size = UDim2.new(0.2, 0, 0.039, 0)
+    Title.BackgroundTransparency = 1
+    Title.Text = HubText or "Neverlose"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextScaled = true
+    Title.Font = Enum.Font.SourceSansBold
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Window
 
-	local Line2 = Instance.new('Frame', Window)
-	Line2.Name = "Line2"
-	Line2.Position = UDim2.new(0.23, 0, 0.09, 0)
-	Line2.Size = UDim2.new(0.76, 0, 0, 1)
-	Line2.BackgroundColor3 = Color3.fromRGB(73, 73, 73)
-	Line2.BackgroundTransparency = 0.4
+    -- Decorative Lines
+    local Line1 = Instance.new('Frame')
+    Line1.Name = "Line1"
+    Line1.Position = UDim2.new(0.015, 0, 0.09, 0)
+    Line1.Size = UDim2.new(0.18, 0, 0, 1)
+    Line1.BackgroundColor3 = Color3.fromRGB(73, 73, 73)
+    Line1.BackgroundTransparency = 0.4
+    Line1.Parent = Window
 
-	-- User Profile Section
-	local UserIcon = Instance.new('ImageLabel', Window)
-	UserIcon.Name = "UserIcon"
-	UserIcon.Position = UDim2.new(0.013, 0, 0.91, 0)
-	UserIcon.Size = UDim2.new(0.059, 0, 0.08, 0)
-	UserIcon.BackgroundColor3 = Color3.fromRGB(0, 0, 37)
-	Instance.new('UICorner', UserIcon).CornerRadius = UDim.new(1, 0)
+    local Line2 = Instance.new('Frame')
+    Line2.Name = "Line2"
+    Line2.Position = UDim2.new(0.23, 0, 0.09, 0)
+    Line2.Size = UDim2.new(0.76, 0, 0, 1)
+    Line2.BackgroundColor3 = Color3.fromRGB(73, 73, 73)
+    Line2.BackgroundTransparency = 0.4
+    Line2.Parent = Window
 
-	local thumbType, thumbSize = Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420
-	local success, imageUrl = pcall(function() return Players:GetUserThumbnailAsync(LocalPlayer.UserId, thumbType, thumbSize) end)
-	if success then UserIcon.Image = imageUrl end
+    -- Sidebar Icons/Images
+    local HubIcon = Instance.new('ImageLabel')
+    HubIcon.Name = "HubIcon"
+    HubIcon.Position = UDim2.new(0.009, 0, 0.01, 0)
+    HubIcon.Size = UDim2.new(0.049, 0, 0.059, 0)
+    HubIcon.BackgroundColor3 = Color3.fromRGB(0, 0, 31)
+    HubIcon.Image = HubImage or ""
+    HubIcon.Parent = Window
+    local UICorner_4 = Instance.new('UICorner')
+    UICorner_4.CornerRadius = UDim.new(0, 8)
+    UICorner_4.Parent = HubIcon
 
-	local Username = Instance.new('TextLabel', Window)
-	Username.Position = UDim2.new(0.074, 0, 0.924, 0)
-	Username.Size = UDim2.new(0.1, 0, 0.03, 0)
-	Username.BackgroundTransparency = 1
-	Username.Text = LocalPlayer.Name
-	Username.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Username.TextScaled = true
-	Username.Font = Enum.Font.SourceSansBold
-	Username.TextXAlignment = Enum.TextXAlignment.Left
+    -- Tab Button Holder (Sidebar)
+    local TabScroll = Instance.new('ScrollingFrame')
+    TabScroll.Name = "TabScroll"
+    TabScroll.Position = UDim2.new(0.012, 0, 0.1, 0)
+    TabScroll.Size = UDim2.new(0.19, 0, 0.799, 0)
+    TabScroll.BackgroundTransparency = 1
+    TabScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    TabScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    TabScroll.ScrollBarThickness = 0
+    TabScroll.Parent = Window
 
-	local Days = Instance.new('TextLabel', Window)
-	Days.Position = UDim2.new(0.074, 0, 0.952, 0)
-	Days.Size = UDim2.new(0.1, 0, 0.03, 0)
-	Days.BackgroundTransparency = 1
-	Days.Text = "9999 days left"
-	Days.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Days.TextTransparency = 0.5
-	Days.TextScaled = true
-	Days.Font = Enum.Font.SourceSansBold
-	Days.TextXAlignment = Enum.TextXAlignment.Left
+    local UIListLayout = Instance.new('UIListLayout')
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0, 4)
+    UIListLayout.Parent = TabScroll
 
-	-- Navigation Hub
-	local HubIcon = Instance.new('ImageLabel', Window)
-	HubIcon.Position = UDim2.new(0.009, 0, 0.01, 0)
-	HubIcon.Size = UDim2.new(0.049, 0, 0.059, 0)
-	HubIcon.BackgroundColor3 = Color3.fromRGB(0, 0, 31)
-	HubIcon.Image = HubImage or ""
-	Instance.new('UICorner', HubIcon).CornerRadius = UDim.new(0, 8)
+    -- Profile Section
+    local UserIcon = Instance.new('ImageLabel')
+    UserIcon.Name = "UserIcon"
+    UserIcon.Position = UDim2.new(0.0132, 0, 0.91, 0)
+    UserIcon.Size = UDim2.new(0.059, 0, 0.0806, 0)
+    UserIcon.BackgroundColor3 = Color3.fromRGB(0, 0, 37)
+    UserIcon.Parent = Window
+    Instance.new("UICorner", UserIcon).CornerRadius = UDim.new(1, 0)
 
-	local Title = Instance.new('TextLabel', Window)
-	Title.Position = UDim2.new(0.074, 0, 0.01, 0)
-	Title.Size = UDim2.new(0.2, 0, 0.039, 0)
-	Title.BackgroundTransparency = 1
-	Title.Text = HubText or "Neverlose"
-	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Title.TextScaled = true
-	Title.Font = Enum.Font.SourceSansBold
-	Title.TextXAlignment = Enum.TextXAlignment.Left
+    local success, imageUrl = pcall(function()
+        return Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    end)
+    if success then UserIcon.Image = imageUrl end
 
-	-- Sidebar Tab Scrolling
-	self.TabHolder = Instance.new('ScrollingFrame', Window)
-	self.TabHolder.Name = "TabHolder"
-	self.TabHolder.Position = UDim2.new(0.012, 0, 0.1, 0)
-	self.TabHolder.Size = UDim2.new(0.19, 0, 0.8, 0)
-	self.TabHolder.BackgroundTransparency = 1
-	self.TabHolder.ScrollBarThickness = 0
-	self.TabHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
-	self.TabHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    local Username = Instance.new('TextLabel')
+    Username.Name = "Username"
+    Username.Position = UDim2.new(0.074, 0, 0.924, 0)
+    Username.Size = UDim2.new(0.1, 0, 0.03, 0)
+    Username.BackgroundTransparency = 1
+    Username.Text = LocalPlayer.Name
+    Username.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Username.TextScaled = true
+    Username.Font = Enum.Font.SourceSansBold
+    Username.TextXAlignment = Enum.TextXAlignment.Left
+    Username.Parent = Window
 
-	local TabListLayout = Instance.new('UIListLayout', self.TabHolder)
-	TabListLayout.Padding = UDim.new(0, 4)
-	TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    local Days = Instance.new('TextLabel')
+    Days.Name = "Days"
+    Days.Position = UDim2.new(0.074, 0, 0.9524, 0)
+    Days.Size = UDim2.new(0.1, 0, 0.03, 0)
+    Days.BackgroundTransparency = 1
+    Days.Text = "9999 days left"
+    Days.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Days.TextScaled = true
+    Days.TextTransparency = 0.5
+    Days.Font = Enum.Font.SourceSansBold
+    Days.TextXAlignment = Enum.TextXAlignment.Left
+    Days.Parent = Window
 
-	-- Main Right Frame (where tabs appear)
-	self.ContentArea = Instance.new('Frame', Window)
-	self.ContentArea.Name = "ContentArea"
-	self.ContentArea.Position = UDim2.new(0.219, 0, 0, 0)
-	self.ContentArea.Size = UDim2.new(0.781, 0, 1, 0)
-	self.ContentArea.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
-	self.ContentArea.BackgroundTransparency = 0.1
-	Instance.new('UICorner', self.ContentArea).CornerRadius = UDim.new(0, 8)
+    -- Main Content Display
+    local ContentFrame = Instance.new('Frame')
+    ContentFrame.Name = "Frame_2"
+    ContentFrame.Position = UDim2.new(0.219, 0, 0, 0)
+    ContentFrame.Size = UDim2.new(0.781, 0, 1, 0)
+    ContentFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+    ContentFrame.BackgroundTransparency = 0.1
+    ContentFrame.Parent = Window
+    Instance.new("UICorner", ContentFrame).CornerRadius = UDim.new(0, 8)
+    self.ContentFrame = ContentFrame
 
-	self.Tabs = {}
-	self.ActiveTab = nil
-
-	return self
+    return self
 end
 
 function NEVERLOSE:AddTab(Name, IconID)
-	local TabButton = Instance.new('Frame', self.TabHolder)
-	TabButton.Name = Name .. "Btn"
-	TabButton.Size = UDim2.new(0.98, 0, 0, 30)
-	TabButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	TabButton.BackgroundTransparency = 0.7
-	Instance.new('UICorner', TabButton).CornerRadius = UDim.new(0, 5)
+    local tabFunctions = {}
+    
+    -- Tab Button
+    local TabButton = Instance.new('Frame')
+    TabButton.Name = "TabButton"
+    TabButton.Size = UDim2.new(0.98, 0, 0.024, 0)
+    TabButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TabButton.BackgroundTransparency = 1 -- Start unselected
+    TabButton.Parent = self.Window.TabScroll
 
-	local Aspect = Instance.new('UIAspectRatioConstraint', TabButton)
-	Aspect.AspectRatio = 5
+    local UICorner = Instance.new('UICorner')
+    UICorner.CornerRadius = UDim.new(0, 5)
+    UICorner.Parent = TabButton
 
-	local Label = Instance.new('TextLabel', TabButton)
-	Label.Position = UDim2.new(0.235, 0, 0.158, 0)
-	Label.Size = UDim2.new(0.6, 0, 0.62, 0)
-	Label.BackgroundTransparency = 1
-	Label.Text = Name
-	Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Label.TextScaled = true
-	Label.Font = Enum.Font.SourceSansBold
-	Label.TextXAlignment = Enum.TextXAlignment.Left
+    local UIAspectRatioConstraint = Instance.new('UIAspectRatioConstraint')
+    UIAspectRatioConstraint.AspectRatio = 5
+    UIAspectRatioConstraint.Parent = TabButton
 
-	local Icon = Instance.new('ImageLabel', TabButton)
-	Icon.Position = UDim2.new(0.059, 0, 0.21, 0)
-	Icon.Size = UDim2.new(0.1, 0, 0.5, 0)
-	Icon.BackgroundTransparency = 1
-	Icon.Image = IconID or ""
-	Icon.ImageColor3 = Color3.fromRGB(50, 5, 128)
+    local Label = Instance.new('TextLabel')
+    Label.Name = "Label"
+    Label.Position = UDim2.new(0.235, 0, 0.158, 0)
+    Label.Size = UDim2.new(0.6, 0, 0.62, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = Name
+    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Label.TextScaled = true
+    Label.Font = Enum.Font.SourceSansBold
+    Label.TextTransparency = 0.5
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Parent = TabButton
 
-	local Clicker = Instance.new("TextButton", TabButton)
-	Clicker.Size = UDim2.new(1, 0, 1, 0)
-	Clicker.BackgroundTransparency = 1
-	Clicker.Text = ""
+    local TabIcon = Instance.new('ImageLabel')
+    TabIcon.Name = "TabIcon"
+    TabIcon.Position = UDim2.new(0.059, 0, 0.21, 0)
+    TabIcon.Size = UDim2.new(0.1, 0, 0.5, 0)
+    TabIcon.BackgroundTransparency = 1
+    TabIcon.Image = IconID or ""
+    TabIcon.ImageColor3 = Color3.fromRGB(50, 5, 128)
+    TabIcon.Parent = TabButton
 
-	-- The Page for this tab
-	local Page = Instance.new('ScrollingFrame', self.ContentArea)
-	Page.Name = Name .. "Page"
-	Page.Size = UDim2.new(1, -20, 0.86, 0)
-	Page.Position = UDim2.new(0.016, 0, 0.1, 0)
-	Page.BackgroundTransparency = 1
-	Page.ScrollBarThickness = 0
-	Page.Visible = false
-	Page.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    -- Container for Tab Content
+    local TabHose = Instance.new('Frame')
+    TabHose.Name = Name.."_Hose"
+    TabHose.Position = UDim2.new(0.016, 0, 0.1, 0)
+    TabHose.Size = UDim2.new(0.946, 0, 0.86, 0)
+    TabHose.BackgroundTransparency = 1
+    TabHose.Visible = false
+    TabHose.Parent = self.ContentFrame
 
-	local PageLayout = Instance.new('UIListLayout', Page)
-	PageLayout.FillDirection = Enum.FillDirection.Horizontal
-	PageLayout.Padding = UDim.new(0, 10)
+    local Container = Instance.new('ScrollingFrame')
+    Container.Name = "Container"
+    Container.Size = UDim2.new(1, 0, 1, 0)
+    Container.BackgroundTransparency = 1
+    Container.ScrollBarThickness = 0
+    Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    Container.Parent = TabHose
 
-	-- Left and Right columns inside Page
-	local LeftCol = Instance.new("Frame", Page)
-	LeftCol.Name = "Left"
-	LeftCol.Size = UDim2.new(0.489, 0, 1, 0)
-	LeftCol.BackgroundTransparency = 1
-	local LList = Instance.new("UIListLayout", LeftCol)
-	LList.Padding = UDim.new(0, 4)
+    local UIListLayout_2 = Instance.new('UIListLayout')
+    UIListLayout_2.FillDirection = Enum.FillDirection.Horizontal
+    UIListLayout_2.Padding = UDim.new(0, 10)
+    UIListLayout_2.Parent = Container
 
-	local RightCol = Instance.new("Frame", Page)
-	RightCol.Name = "Right"
-	RightCol.Size = UDim2.new(0.488, 0, 1, 0)
-	RightCol.BackgroundTransparency = 1
-	local RList = Instance.new("UIListLayout", RightCol)
-	RList.Padding = UDim.new(0, 4)
+    local Left = Instance.new('Frame')
+    Left.Name = "Left"
+    Left.Size = UDim2.new(0.489, 0, 1, 0)
+    Left.BackgroundTransparency = 1
+    Left.Parent = Container
+    Instance.new("UIListLayout", Left).Padding = UDim.new(0, 4)
 
-	-- Tab Switching Logic + Animation
-	Clicker.MouseButton1Click:Connect(function()
-		for _, t in pairs(self.Tabs) do
-			t.Page.Visible = false
-			TweenService:Create(t.Btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.9}):Play()
-		end
-		Page.Visible = true
-		Page.GroupTransparency = 1 -- Animation start
-		TweenService:Create(TabButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.7}):Play()
-		
-		-- Simple Fade In Animation
-		local fade = Instance.new("NumberValue")
-		fade.Changed:Connect(function(val) Page.GroupTransparency = val end)
-		TweenService:Create(fade, TweenInfo.new(0.3), {Value = 0}):Play()
-	end)
+    local Right = Instance.new('Frame')
+    Right.Name = "Right"
+    Right.Size = UDim2.new(0.488, 0, 1, 0)
+    Right.BackgroundTransparency = 1
+    Right.Parent = Container
+    Instance.new("UIListLayout", Right).Padding = UDim.new(0, 4)
 
-	if #self.Tabs == 0 then
-		Page.Visible = true
-		TabButton.BackgroundTransparency = 0.7
-	else
-		TabButton.BackgroundTransparency = 0.9
-	end
+    -- Tab Click Functionality
+    local function Switch()
+        if self.CurrentTab then
+            self.CurrentTab.Hose.Visible = false
+            TweenService:Create(self.CurrentTab.Button, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(self.CurrentTab.Label, TweenInfo.new(0.2), {TextTransparency = 0.5}):Play()
+        end
+        self.CurrentTab = {Hose = TabHose, Button = TabButton, Label = Label}
+        TabHose.Visible = true
+        TweenService:Create(TabButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.7}):Play()
+        TweenService:Create(Label, TweenInfo.new(0.2), {TextTransparency = 0}):Play()
+    end
 
-	table.insert(self.Tabs, {Btn = TabButton, Page = Page})
+    TabButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Switch()
+        end
+    end)
 
-	local TabFuncs = {}
-	function TabFuncs:AddSection(SectionName, Column)
-		local ParentCol = (Column == "Right" and RightCol or LeftCol)
-		
-		local SectionLabel = Instance.new('TextLabel', ParentCol)
-		SectionLabel.Size = UDim2.new(0.28, 0, 0.019, 0)
-		SectionLabel.BackgroundTransparency = 1
-		SectionLabel.Text = SectionName:upper()
-		SectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-		SectionLabel.TextTransparency = 0.5
-		SectionLabel.TextScaled = true
-		SectionLabel.Font = Enum.Font.SourceSansBold
-		SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
-		Instance.new('UIAspectRatioConstraint', SectionLabel).AspectRatio = 5
+    -- AddSection logic within tab
+    function tabFunctions:AddSection(SectionName, Side)
+        local ParentCol = (Side == "Right" and Right or Left)
+        
+        local SectionLabel = Instance.new('TextLabel')
+        SectionLabel.Name = "SectionLabel"
+        SectionLabel.Size = UDim2.new(0.28, 0, 0.019, 0)
+        SectionLabel.BackgroundTransparency = 1
+        SectionLabel.Text = string.upper(SectionName)
+        SectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SectionLabel.TextScaled = true
+        SectionLabel.Font = Enum.Font.SourceSansBold
+        SectionLabel.TextTransparency = 0.5
+        SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+        SectionLabel.Parent = ParentCol
 
-		local section = Instance.new('Frame', ParentCol)
-		section.Name = SectionName .. "Section"
-		section.Size = UDim2.new(1, 0, 0, 0)
-		section.BackgroundColor3 = Color3.fromRGB(23, 23, 31)
-		section.AutomaticSize = Enum.AutomaticSize.Y
-		
-		Instance.new('UICorner', section).CornerRadius = UDim.new(0, 8)
-		local Stroke = Instance.new('UIStroke', section)
-		Stroke.Color = Color3.fromRGB(29, 29, 29)
-		
-		local SectionLayout = Instance.new('UIListLayout', section)
-		SectionLayout.Padding = UDim.new(0, 4)
-		
-		return section
-	end
-	
-	return TabFuncs
+        local UIAspectRatioConstraint_3 = Instance.new('UIAspectRatioConstraint')
+        UIAspectRatioConstraint_3.AspectRatio = 5
+        UIAspectRatioConstraint_3.Parent = SectionLabel
+
+        local section = Instance.new('Frame')
+        section.Name = "section"
+        section.Size = UDim2.new(1, 0, 0, 0)
+        section.BackgroundColor3 = Color3.fromRGB(23, 23, 31)
+        section.AutomaticSize = Enum.AutomaticSize.Y
+        section.Parent = ParentCol
+
+        local UICorner_8 = Instance.new('UICorner')
+        UICorner_8.CornerRadius = UDim.new(0, 8)
+        UICorner_8.Parent = section
+
+        local UIListLayout_4 = Instance.new('UIListLayout')
+        UIListLayout_4.Padding = UDim.new(0, 4)
+        UIListLayout_4.Parent = section
+
+        local UIStroke = Instance.new('UIStroke')
+        UIStroke.Color = Color3.fromRGB(29, 29, 29)
+        UIStroke.Parent = section
+        
+        -- Padding for items inside section
+        local UIPadding = Instance.new("UIPadding")
+        UIPadding.PaddingLeft = UDim.new(0, 8)
+        UIPadding.PaddingTop = UDim.new(0, 5)
+        UIPadding.Parent = section
+
+        return section
+    end
+
+    -- Select first tab by default
+    if not self.CurrentTab then Switch() end
+
+    return tabFunctions
 end
 
 return NEVERLOSE
